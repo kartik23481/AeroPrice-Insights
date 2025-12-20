@@ -1,0 +1,15 @@
+experiment:
+  name: flight-price-training
+
+model:
+  type: xgboost
+  search_space:
+    - n_estimators: 150
+      learning_rate: 0.10
+      max_depth: 6
+    - n_estimators: 200
+      learning_rate: 0.08
+      max_depth: 7
+    - n_estimators: 250
+      learning_rate: 0.07
+      max_depth: 8

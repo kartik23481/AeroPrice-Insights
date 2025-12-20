@@ -1,0 +1,13 @@
+columns:
+  required:
+    - airline
+    - source
+    - destination
+    - duration
+    - total_stops
+    - dep_time_hour
+    - dtoj_day
+    - dtoj_month
+    - dtoj_year
+    - additional_info
+    - price

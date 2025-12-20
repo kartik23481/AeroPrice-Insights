@@ -1,0 +1,5 @@
+feature_flags:
+  enable_route_encoding: true
+  enable_north_flag: true
+  enable_duration_rbf: true
+  enable_info_encoder: true
