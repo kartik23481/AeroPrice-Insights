@@ -22,7 +22,6 @@ class ToDataFrame(BaseEstimator, TransformerMixin):
 
 
 def is_north(temp):
-    # Ensure input is DataFrame
     if isinstance(temp, np.ndarray):
         temp = pd.DataFrame(temp, columns=['source', 'destination'])
     

@@ -3,18 +3,26 @@ import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.metrics.pairwise import rbf_kernel
 
+
 class RBFPercentileSimilarity(BaseEstimator, TransformerMixin):
     def __init__(self, variables=None, percentiles=[0.25, 0.5, 0.75], gamma=0.1):
         self.variables = variables
         self.percentiles = percentiles
         self.gamma = gamma
 
-    def fit(self, df, y=None):
+    def fit(self, X, y=None):
+        # ---- FIX: convert numpy → DataFrame ----
+        if isinstance(X, np.ndarray):
+            X = pd.DataFrame(X)
+
+        # detect variables if not provided
         if not self.variables:
-            self.variables = df.select_dtypes(include="number").columns.to_list()
+            self.variables = X.select_dtypes(include="number").columns.to_list()
+
+        # save percentiles reference
         self.reference_values_ = {
             col: (
-                df.loc[:, col]
+                X.loc[:, col]
                 .quantile(self.percentiles)
                 .values
                 .reshape(-1, 1)
@@ -23,25 +31,27 @@ class RBFPercentileSimilarity(BaseEstimator, TransformerMixin):
         }
         return self
 
-    def transform(self, df):
-        # Convert to DataFrame if X is ndarray
-        if isinstance(df, np.ndarray):
-            df = pd.DataFrame(df, columns=self.variables)
-        
-        objects = []
+    def transform(self, X):
+        # ---- FIX: convert numpy → DataFrame ----
+        if isinstance(X, np.ndarray):
+            X = pd.DataFrame(X, columns=self.variables)
+
+        outputs = []
         for col in self.variables:
-            columns = [f"{col}_rbf_{int(percentile * 100)}" for percentile in self.percentiles]
-            obj = pd.DataFrame(
-                data=rbf_kernel(df[[col]], Y=self.reference_values_[col], gamma=self.gamma),
-                columns=columns,
-                index=df.index
+            columns = [f"{col}_rbf_{int(p*100)}" for p in self.percentiles]
+
+            arr = rbf_kernel(
+                X[[col]],
+                Y=self.reference_values_[col],
+                gamma=self.gamma
             )
-            objects.append(obj)
-        return pd.concat(objects, axis=1)
+
+            out = pd.DataFrame(arr, columns=columns, index=X.index)
+            outputs.append(out)
+
+        return pd.concat(outputs, axis=1)
 
 
-
-from sklearn.base import BaseEstimator, TransformerMixin
 
 class RouteCreator(BaseEstimator, TransformerMixin):
     def __init__(self, route_map):
@@ -49,13 +59,15 @@ class RouteCreator(BaseEstimator, TransformerMixin):
 
     def fit(self, X, y=None):
         return self
-    
+
     def transform(self, X):
-        X = X.copy()
-        X["route"] = X.apply(
-            lambda row: self.route_map.get((row["source"], row["destination"]), "Other"), 
+        # ---- FIX: convert numpy → DataFrame ----
+        if isinstance(X, np.ndarray):
+            X = pd.DataFrame(X, columns=["source", "destination"])
+
+        X2 = X.copy()
+        X2["route"] = X2.apply(
+            lambda row: self.route_map.get((row["source"], row["destination"]), "Other"),
             axis=1
         )
-        # keep only the new route column, since ColumnTransformer expects transformed output
-        return X[["route"]]
-
+        return X2[["route"]]
