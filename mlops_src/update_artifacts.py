@@ -7,6 +7,7 @@ to:
     docker_backend/artifacts/
 
 It ensures:
+ - destination folder always exists
  - outdated old artifacts are removed
  - latest transformer + model exist
  - logs all steps for debugging
@@ -23,13 +24,12 @@ PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 SRC_DIR = os.path.join(PROJECT_ROOT, "backend_artifacts")
 DEST_DIR = os.path.join(PROJECT_ROOT, "docker_backend", "artifacts")
 
-# filenames expected in backend_artifacts
 EXPECTED = [
     "latest_column_transformer.joblib",
     "xgb_flight_price_model.joblib"
 ]
 
-# --- LOGGING SETUP ---
+# --- Logging ---
 LOG_DIR = os.path.join(PROJECT_ROOT, "mlops_src", "logs")
 os.makedirs(LOG_DIR, exist_ok=True)
 
@@ -42,8 +42,15 @@ logging.basicConfig(
 logger = logging.getLogger("update_artifacts")
 
 
+def ensure_destination_exists():
+    """Ensure docker_backend/artifacts folder exists"""
+    if not os.path.exists(DEST_DIR):
+        logger.info(f"Creating destination folder: {DEST_DIR}")
+        os.makedirs(DEST_DIR, exist_ok=True)
+
+
 def verify_sources_exist():
-    """Ensure model + transformer exist in backend_artifacts"""
+    """Ensure trained artifacts exist"""
     missing = []
 
     for fname in EXPECTED:
@@ -52,46 +59,44 @@ def verify_sources_exist():
 
     if missing:
         logger.error(f"Missing artifact(s): {missing}")
-        raise FileNotFoundError(f"Run training first → Missing: {missing}")
+        raise FileNotFoundError(
+            f"Run training first → Missing artifact(s): {missing}"
+        )
 
 
 def clean_destination():
-    """Remove old artifacts from docker_backend/artifacts"""
-    if not os.path.exists(DEST_DIR):
-        os.makedirs(DEST_DIR, exist_ok=True)
-        return
-
-    for file in os.listdir(DEST_DIR):
-        path = os.path.join(DEST_DIR, file)
+    """Remove outdated files"""
+    for item in os.listdir(DEST_DIR):
+        path = os.path.join(DEST_DIR, item)
         if os.path.isfile(path):
             logger.info(f"Removing old artifact: {path}")
             os.remove(path)
 
 
 def copy_artifacts():
-    """Copy new artifacts to docker_backend/artifacts"""
+    """Copy freshly trained artifacts"""
     for fname in EXPECTED:
-        src_path = os.path.join(SRC_DIR, fname)
-        dest_path = os.path.join(DEST_DIR, fname)
-
-        logger.info(f"Copying {src_path} → {dest_path}")
-        shutil.copy2(src_path, dest_path)
+        shutil.copy2(
+            os.path.join(SRC_DIR, fname),
+            os.path.join(DEST_DIR, fname)
+        )
+        logger.info(f"Copied → {fname}")
 
 
 def main():
     logger.info("===== UPDATE ARTIFACTS STARTED =====")
 
     if not os.path.exists(SRC_DIR):
-        logger.error(f"backend_artifacts/ NOT FOUND → {SRC_DIR}")
-        raise FileNotFoundError("backend_artifacts folder missing")
+        raise FileNotFoundError(f"backend_artifacts not found: {SRC_DIR}")
+
+    # NEW STEP - Ensure DESTINATION exists before ANY action
+    ensure_destination_exists()
 
     verify_sources_exist()
     clean_destination()
     copy_artifacts()
 
-    logger.info("Artifacts updated successfully!")
     logger.info("===== UPDATE ARTIFACTS COMPLETED =====")
-
     print("✅ Artifacts copied to docker_backend/artifacts")
 
 
