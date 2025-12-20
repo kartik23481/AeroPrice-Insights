@@ -62,7 +62,7 @@ jobs:
       # 9️⃣ Build & push Docker image
       - name: Build & Push Docker Image
         run: |
-          echo "${{ secrets.DOCKER_HUB_TOKEN }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
+          echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
           docker build -t aeroprice-backend ./docker_backend
-          docker tag aeroprice-backend docker.io/${{ secrets.DOCKER_HUB_USERNAME }}/aeroprice-backend:latest
-          docker push docker.io/${{ secrets.DOCKER_HUB_USERNAME }}/aeroprice-backend:latest
+          docker tag aeroprice-backend docker.io/${{ secrets.DOCKERHUB_USERNAME }}/aeroprice-backend:latest
+          docker push docker.io/${{ secrets.DOCKERHUB_USERNAME }}/aeroprice-backend:latest
