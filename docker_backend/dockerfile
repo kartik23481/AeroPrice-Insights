@@ -25,7 +25,8 @@ RUN pip install --no-cache-dir -r docker_requirements.txt
 COPY api/ api/
 COPY inference/ inference/
 COPY utils/ utils/
-COPY artifacts/ /app/artifacts/
+COPY artifacts/ artifacts/
+COPY mlops_src/ mlops_src/
 
 EXPOSE 8000
 
