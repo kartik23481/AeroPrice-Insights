@@ -38,8 +38,8 @@ PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 DATA_DIR = os.path.join(PROJECT_ROOT, "data")
 BACKEND_ARTIFACTS_DIR = os.path.join(PROJECT_ROOT, "backend_artifacts")
 
-TRAIN_PATH = os.path.join(DATA_DIR, "train_data.csv")
-VAL_PATH = os.path.join(DATA_DIR, "val_data.csv")
+TRAIN_PATH = os.path.join(DATA_DIR,"processed", "train_data.csv")
+VAL_PATH = os.path.join(DATA_DIR, "processed", "val_data.csv")
 
 TRANSFORMER_PATH = os.path.join(BACKEND_ARTIFACTS_DIR, "latest_column_transformer.joblib")
 MODEL_PATH = os.path.join(BACKEND_ARTIFACTS_DIR, "xgb_flight_price_model.joblib")
