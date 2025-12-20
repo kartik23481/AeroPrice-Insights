@@ -3,12 +3,11 @@ name: CI-CD Pipeline
 on:
   push:
     branches: ["main"]
-  pull_request:
 
 jobs:
 
   mlops:
-    name: Train + Build + Deploy
+    name: Train + Build + Push Image
     runs-on: ubuntu-latest
 
     env:
@@ -16,71 +15,54 @@ jobs:
       PYTHONPATH: .
 
     steps:
-      # ---- 1️⃣ Checkout Code ----
+      # 1️⃣ Checkout
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # ---- 2️⃣ Setup Python ----
+      # 2️⃣ Python setup
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: "3.10"
 
-      # ---- 3️⃣ Install Dependencies ----
+      # 3️⃣ Install dependencies
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install dvc
 
-      # ---- 4️⃣ DVC Data (optional remote) ----
-      - name: Pull DVC data (local fallback)
+      # 4️⃣ Pull DVC (optional)
+      - name: Pull DVC data
         continue-on-error: true
-        run: |
-          dvc pull || echo "⚠ Using local data only."
+        run: dvc pull || echo "No DVC remote - using local."
 
-      # ---- 5️⃣ Data Preprocessing ----
+      # 5️⃣ Preprocess data
       - name: Data preprocessing
         run: |
           python mlops_src/data_preprocess.py \
             --input data/raw/flight_price.csv \
             --out_dir data/processed
 
-      # ---- 6️⃣ Feature Pipeline Build ----
+      # 6️⃣ Feature pipeline
       - name: Build feature pipeline
         run: |
           python mlops_src/feature_pipeline.py \
             --data data/processed/train_data.csv \
             --artifacts backend_artifacts
 
-      # ---- 7️⃣ Model Training ----
-      - name: Train + tune XGBoost with MLflow
-        run: |
-          python mlops_src/train.py
+      # 7️⃣ Train model
+      - name: Train XGBoost
+        run: python mlops_src/train.py
 
-      # ---- 8️⃣ Sync artifacts → docker backend ----
+      # 8️⃣ Copy artifacts → docker backend
       - name: Update backend artifacts
-        run: |
-          python mlops_src/update_artifacts.py
+        run: python mlops_src/update_artifacts.py
 
-      # ---- 9️⃣ Build & Push Docker Image to Docker Hub ----
+      # 9️⃣ Build & push Docker image
       - name: Build & Push Docker Image
         run: |
-          echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+          echo "${{ secrets.DOCKER_HUB_TOKEN }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
           docker build -t aeroprice-backend ./docker_backend
-          docker tag aeroprice-backend ${{ secrets.DOCKERHUB_USERNAME }}/aeroprice-backend:latest
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/aeroprice-backend:latest
-
-      # ---- 🔟 Deploy to Render using Docker Hub image ----
-      - name: Deploy to Render
-        env:
-          RENDER_TOKEN: ${{ secrets.RENDER_TOKEN }}
-          RENDER_SERVICE_ID: ${{ secrets.RENDER_SERVICE_ID }}
-        run: |
-          curl -X POST \
-          -H "Authorization: Bearer $RENDER_TOKEN" \
-          -H "accept: application/json" \
-          -H "content-type: application/json" \
-          -d '{"clearCache":"clear"}' \
-          https://api.render.com/v1/services/$RENDER_SERVICE_ID/deploys
-
+          docker tag aeroprice-backend docker.io/${{ secrets.DOCKER_HUB_USERNAME }}/aeroprice-backend:latest
+          docker push docker.io/${{ secrets.DOCKER_HUB_USERNAME }}/aeroprice-backend:latest
