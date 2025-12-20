@@ -13,7 +13,7 @@ jobs:
 
     env:
       MLFLOW_TRACKING_URI: file:./mlruns
-      PYTHONPATH: mlops_src
+      PYTHONPATH: .
 
     steps:
       # ---- 1️⃣ Checkout Code ----

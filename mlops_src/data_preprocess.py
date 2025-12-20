@@ -27,7 +27,7 @@ SRC_ROOT = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.abspath(os.path.join(SRC_ROOT, ".."))
 sys.path.append(PROJECT_ROOT)
 
-from utils.logger import get_logger
+from mlops_src.utils.logger import get_logger
 
 
 # ========= initialize logging =========
