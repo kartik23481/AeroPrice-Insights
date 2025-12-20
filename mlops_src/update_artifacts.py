@@ -1,5 +1,5 @@
 """
-src/update_artifacts.py
+mlops_src/update_artifacts.py
 
 This script copies newly trained artifacts from:
     backend_artifacts/
@@ -30,7 +30,7 @@ EXPECTED = [
 ]
 
 # --- LOGGING SETUP ---
-LOG_DIR = os.path.join(PROJECT_ROOT, "src", "logs")
+LOG_DIR = os.path.join(PROJECT_ROOT, "mlops_src", "logs")
 os.makedirs(LOG_DIR, exist_ok=True)
 
 logging.basicConfig(

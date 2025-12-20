@@ -11,7 +11,7 @@ This script:
 ✔ saves processed outputs
 
 Usage:
-    python src/data_preprocess.py \
+    python mlops_src/data_preprocess.py \
         --input data/raw/flight_price.csv \
         --out_dir data/processed/
 """
@@ -27,11 +27,11 @@ SRC_ROOT = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.abspath(os.path.join(SRC_ROOT, ".."))
 sys.path.append(PROJECT_ROOT)
 
-from src.utils.logger import get_logger
+from mlops_src.utils.logger import get_logger
 
 
 # ========= initialize logging =========
-LOG_PATH = os.path.join(PROJECT_ROOT, "src", "logs")
+LOG_PATH = os.path.join(PROJECT_ROOT, "mlops_src", "logs")
 os.makedirs(LOG_PATH, exist_ok=True)
 logger = get_logger("preprocessing", os.path.join(LOG_PATH, "preprocessing.log"))
 

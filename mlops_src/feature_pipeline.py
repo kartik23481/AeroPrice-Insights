@@ -39,7 +39,7 @@ from logging import getLogger, basicConfig
 # ==============================
 # Logging Setup
 # ==============================
-LOG_PATH = os.path.join(ROOT, "src", "logs")
+LOG_PATH = os.path.join(ROOT, "mlops_src", "logs")
 os.makedirs(LOG_PATH, exist_ok=True)
 basicConfig(
     filename=os.path.join(LOG_PATH, "feature_pipeline.log"),

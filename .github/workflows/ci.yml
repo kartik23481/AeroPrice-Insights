@@ -13,7 +13,7 @@ jobs:
 
     env:
       MLFLOW_TRACKING_URI: file:./mlruns
-      PYTHONPATH: src
+      PYTHONPATH: mlops_src
 
     steps:
       # ---- 1️⃣ Checkout Code ----
@@ -33,37 +33,37 @@ jobs:
           pip install -r requirements.txt
           pip install mlflow xgboost dvc
 
-      # ---- 4️⃣ DVC Data (if remote configured) ----
-      - name: Pull DVC data
+      # ---- 4️⃣ DVC Data (optional remote) ----
+      - name: Pull DVC data (local fallback)
         continue-on-error: true
         run: |
-          dvc pull || echo "⚠ No remote configured — using local data"
+          dvc pull || echo "⚠ Using local data only."
 
       # ---- 5️⃣ Data Preprocessing ----
-      - name: Run data preprocessing
+      - name: Data preprocessing
         run: |
-          python src/data_preprocess.py \
+          python mlops_src/data_preprocess.py \
             --input data/raw/flight_price.csv \
             --out_dir data/processed
 
-      # ---- 6️⃣ Build Feature Pipeline ----
-      - name: Build & fit feature pipeline
+      # ---- 6️⃣ Feature Pipeline Build ----
+      - name: Build feature pipeline
         run: |
-          python src/feature_pipeline.py \
+          python mlops_src/feature_pipeline.py \
             --data data/processed/train_data.csv \
             --artifacts backend_artifacts
 
-      # ---- 7️⃣ Train & Tune Model ----
-      - name: Train model with MLflow
+      # ---- 7️⃣ Model Training ----
+      - name: Train + tune XGBoost with MLflow
         run: |
-          python src/train.py
+          python mlops_src/train.py
 
-      # ---- 8️⃣ Sync artifacts to docker backend ----
+      # ---- 8️⃣ Sync artifacts → docker backend ----
       - name: Update backend artifacts
         run: |
-          python src/update_artifacts.py
+          python mlops_src/update_artifacts.py
 
-      # ---- 9️⃣ Build Docker image ----
+      # ---- 9️⃣ Build Docker Image ----
       - name: Build Docker image
         run: |
           docker build -t aeroprice-backend ./docker_backend

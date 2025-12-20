@@ -1,5 +1,5 @@
 """
-src/train.py
+mlops_src/train.py
 """
 
 import os
@@ -17,7 +17,7 @@ import joblib
 # --------------------------
 import logging
 
-LOG_DIR = os.path.join("src", "logs")
+LOG_DIR = os.path.join("mlops_src", "logs")
 os.makedirs(LOG_DIR, exist_ok=True)
 
 logging.basicConfig(

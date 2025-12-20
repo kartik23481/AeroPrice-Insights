@@ -1,4 +1,4 @@
-# src/utils/paths.py
+# mlops_src/utils/paths.py
 
 import os
 
