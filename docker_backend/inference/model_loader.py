@@ -14,10 +14,7 @@ from utils.feature_utils import (
 import utils.rbf
 
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-# BASE_DIR = /app/docker_backend
-
-ARTIFACTS_DIR = os.path.join(BASE_DIR, "artifacts")
+ARTIFACTS_DIR = "/app/artifacts"
 
 TRANSFORMER_PATH = os.path.join(
     ARTIFACTS_DIR,
@@ -31,3 +28,5 @@ MODEL_PATH = os.path.join(
 
 COLUMN_TRANSFORMER = joblib.load(TRANSFORMER_PATH)
 MODEL = joblib.load(MODEL_PATH)
+
+
