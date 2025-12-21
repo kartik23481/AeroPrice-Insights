@@ -22,10 +22,10 @@ WORKDIR /app
 COPY docker_requirements.txt .
 RUN pip install --no-cache-dir -r docker_requirements.txt
 
-COPY api/ api/
-COPY inference/ inference/
-COPY utils/ utils/
-COPY artifacts/ artifacts/
+COPY api/ /app/api/
+COPY inference/ /app/inference/
+COPY utils/ /app/utils/
+COPY artifacts/ /app/artifacts/
 
 EXPOSE 8000
 

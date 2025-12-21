@@ -7,7 +7,7 @@ import pandas as pd
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 sys.path.append(ROOT)
 
-from docker_backend.utils.feature_utils import (
+from utils.feature_utils import (
     is_north,
     find_part_of_month,
     part_of_day,
@@ -17,7 +17,7 @@ from docker_backend.utils.feature_utils import (
     have_info,
     ToDataFrame,
 )
-from docker_backend.utils.rbf import RouteCreator, RBFPercentileSimilarity
+from utils.rbf import RouteCreator, RBFPercentileSimilarity
 
 from sklearn.pipeline import Pipeline, FeatureUnion
 from sklearn.compose import ColumnTransformer
