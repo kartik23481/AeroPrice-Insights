@@ -16,3 +16,5 @@ class FlightInput(BaseModel):
 
 class PredictionResponse(BaseModel):
     predicted_price: float
+
+
