@@ -107,7 +107,7 @@ X_val_tf = column_transformer.transform(X_val)
 # --------------------------
 # MLflow auto tuning
 # --------------------------
-logger.info("Starting MLflow experiment: flight-price-training")
+print("Starting MLflow experiment: flight-price-training")
 mlflow.set_experiment("flight-price-training")
 
 search_space = [
@@ -147,8 +147,8 @@ for params in search_space:
             best_params = params
 
 
-logger.info(f"BEST PARAMS: {best_params}")
-logger.info(f"BEST RMSE:   {best_rmse}")
+print(f"BEST PARAMS: {best_params}")
+print(f"BEST RMSE:   {best_rmse}")
 
 with mlflow.start_run():
     mlflow.log_params(best_params)
