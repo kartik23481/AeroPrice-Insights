@@ -68,7 +68,8 @@ jobs:
           docker push docker.io/${{ secrets.DOCKERHUB_USERNAME }}/aeroprice-backend:latest
 
 #  🔥 NEW STEP — automatic deployment trigger for Render
-      - name: Deploy to Render (Auto Trigger)
+# ---- 🔟 Deploy to Render (auto-trigger deploy) ----
+      - name: Deploy to Render
         env:
           RENDER_TOKEN: ${{ secrets.RENDER_TOKEN }}
           RENDER_SERVICE_ID: ${{ secrets.RENDER_SERVICE_ID }}
@@ -77,5 +78,5 @@ jobs:
           -H "Authorization: Bearer $RENDER_TOKEN" \
           -H "accept: application/json" \
           -H "content-type: application/json" \
-          -d '{"clearCache":"clear"}' \
+          -d '{"image": "'"${{ secrets.DOCKERHUB_USERNAME }}"'/aeroprice-backend:latest"}' \
           https://api.render.com/v1/services/$RENDER_SERVICE_ID/deploys
