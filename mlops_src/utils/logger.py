@@ -1,30 +1,43 @@
 # mlops_src/utils/logger.py
+import logging, os
+from datetime import datetime
 
-import logging
-import os
+# One master log file per CI / local run
+RUN_ID = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+LOG_DIR = os.path.join(os.path.dirname(__file__), "..", "logs")
+os.makedirs(LOG_DIR, exist_ok=True)
+MASTER_LOG_FILE = os.path.join(LOG_DIR, f"run_{RUN_ID}.log")
 
 def get_logger(name: str, log_file: str):
     """
-    Creates and returns a logger that writes to a specific file.
+    Returns a logger writing to:
+      1. its own file  (module-specific)
+      2. master run log
+      3. stdout  (for CI visibility)
     """
-
-    # ensure folder exists
     os.makedirs(os.path.dirname(log_file), exist_ok=True)
-
     logger = logging.getLogger(name)
-    
-    # prevent duplicate handlers
-    if logger.handlers:
+
+    if logger.handlers:  # avoid duplicate handlers
         return logger
 
     logger.setLevel(logging.INFO)
+    fmt = logging.Formatter("%(asctime)s | %(levelname)s | %(name)s | %(message)s")
 
-    file_handler = logging.FileHandler(log_file)
-    formatter = logging.Formatter(
-        "%(asctime)s - %(name)s - [%(levelname)s] - %(message)s"
-    )
-    file_handler.setFormatter(formatter)
+    # File for this module
+    fh = logging.FileHandler(log_file)
+    fh.setFormatter(fmt)
 
-    logger.addHandler(file_handler)
+    # File for entire run
+    master_fh = logging.FileHandler(MASTER_LOG_FILE)
+    master_fh.setFormatter(fmt)
+
+    # Console output (CI friendly)
+    ch = logging.StreamHandler()
+    ch.setFormatter(fmt)
+
+    logger.addHandler(fh)
+    logger.addHandler(master_fh)
+    logger.addHandler(ch)
 
     return logger

@@ -31,9 +31,9 @@ from mlops_src.utils.logger import get_logger
 
 
 # ========= initialize logging =========
-LOG_PATH = os.path.join(PROJECT_ROOT, "mlops_src", "logs")
-os.makedirs(LOG_PATH, exist_ok=True)
-logger = get_logger("preprocessing", os.path.join(LOG_PATH, "preprocessing.log"))
+LOG_DIR = os.path.join(PROJECT_ROOT, "mlops_src", "logs")
+logger = get_logger("data_preprocess", os.path.join(LOG_DIR, "data_preprocess.log"))
+logger.info("===== DATA PREPROCESSING STARTED =====")
 
 
 # ========= helper functions =========

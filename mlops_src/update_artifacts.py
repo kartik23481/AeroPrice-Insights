@@ -20,15 +20,12 @@ EXPECTED = [
 ]
 
 # Logging
-LOG_DIR = os.path.join(PROJECT_ROOT, "mlops_src", "logs")
-os.makedirs(LOG_DIR, exist_ok=True)
+from mlops_src.utils.logger import get_logger
 
-logging.basicConfig(
-    filename=os.path.join(LOG_DIR, "update_artifacts.log"),
-    level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(message)s"
-)
-logger = logging.getLogger("update_artifacts")
+LOG_DIR = os.path.join(PROJECT_ROOT, "mlops_src", "logs")
+logger = get_logger("update_artifacts", os.path.join(LOG_DIR, "update_artifacts.log"))
+logger.info("===== UPDATE ARTIFACTS STARTED =====")
+
 
 
 def ensure_destination_exists():

@@ -15,20 +15,12 @@ import joblib
 # --------------------------
 # LOGGING
 # --------------------------
-import logging
+from mlops_src.utils.logger import get_logger
 
 LOG_DIR = os.path.join("mlops_src", "logs")
-os.makedirs(LOG_DIR, exist_ok=True)
-
-logging.basicConfig(
-    filename=os.path.join(LOG_DIR, "train.log"),
-    level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(message)s"
-)
-
-logger = logging.getLogger("train")
-
+logger = get_logger("train", os.path.join(LOG_DIR, "train.log"))
 logger.info("===== TRAINING STARTED =====")
+
 
 # --------------------------
 # PATHS
@@ -148,7 +140,9 @@ for params in search_space:
 
 
 print(f"BEST PARAMS: {best_params}")
+logger.info(f"BEST PARAMS: {best_params}")
 print(f"BEST RMSE:   {best_rmse}")
+logger.info(f"BEST RMSE:   {best_rmse}")
 
 with mlflow.start_run():
     mlflow.log_params(best_params)

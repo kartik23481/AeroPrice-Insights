@@ -39,14 +39,12 @@ from logging import getLogger, basicConfig
 # ==============================
 # Logging Setup
 # ==============================
-LOG_PATH = os.path.join(ROOT, "mlops_src", "logs")
-os.makedirs(LOG_PATH, exist_ok=True)
-basicConfig(
-    filename=os.path.join(LOG_PATH, "feature_pipeline.log"),
-    level="INFO",
-    format="%(asctime)s [%(levelname)s]: %(message)s",
-)
-logger = getLogger("feature_pipeline")
+from mlops_src.utils.logger import get_logger
+
+LOG_DIR = os.path.join(ROOT, "mlops_src", "logs")
+logger = get_logger("feature_pipeline", os.path.join(LOG_DIR, "feature_pipeline.log"))
+logger.info("===== FEATURE PIPELINE STARTED =====")
+
 
 
 
