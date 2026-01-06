@@ -70,7 +70,6 @@ def validate_destination():
             f"ERROR: Files missing in docker_backend/artifacts after copy → {missing_after}"
         )
     
-    print("🎯 Validation success → destination artifacts exist")
     logger.info("Destination contains all expected artifacts.")
 
 
@@ -87,7 +86,6 @@ def main():
     validate_destination()       # <-- POST-COPY VALIDATION ADDED
 
     logger.info("===== UPDATE ARTIFACTS COMPLETED =====")
-    print("✅ Artifacts copied + verified in docker_backend/artifacts")
 
 
 if __name__ == "__main__":

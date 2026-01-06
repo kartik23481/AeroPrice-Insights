@@ -28,16 +28,12 @@ def get_logger(name: str, log_file: str):
     fh = logging.FileHandler(log_file)
     fh.setFormatter(fmt)
 
-    # File for entire run
-    master_fh = logging.FileHandler(MASTER_LOG_FILE)
-    master_fh.setFormatter(fmt)
 
     # Console output (CI friendly)
     ch = logging.StreamHandler()
     ch.setFormatter(fmt)
 
     logger.addHandler(fh)
-    logger.addHandler(master_fh)
     logger.addHandler(ch)
 
     return logger

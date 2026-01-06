@@ -7,7 +7,7 @@ on:
 jobs:
 
   mlops:
-    name: Train + Build + Push Image
+    name: Train + Build + Push Image + Deploy
     runs-on: ubuntu-latest
 
     env:
@@ -80,10 +80,3 @@ jobs:
           -H "content-type: application/json" \
           -d '{"image": "'"${{ secrets.DOCKERHUB_USERNAME }}"'/aeroprice-backend:latest"}' \
           https://api.render.com/deploy/srv-d53s9pmmcj7s73ee2u5g?key=c2JWLl9fgj8
-
-      - name: Upload Logs
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: mlops-logs
-          path: mlops_src/logs/

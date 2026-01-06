@@ -214,7 +214,6 @@ def fit_and_save(train_df: pd.DataFrame, y: pd.Series, artifacts_dir: str = None
     joblib.dump(column_transformer, save_path)
 
     logger.info(f"Transformer saved → {save_path}")
-    print(f"✅ latest_column_transformer saved → {save_path}")
 
 
 if __name__ == "__main__":

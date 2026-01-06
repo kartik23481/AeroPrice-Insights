@@ -1,20 +1,3 @@
-# FROM python:3.10-slim
-
-# WORKDIR /app
-
-# COPY docker_requirements.txt .
-# RUN pip install --no-cache-dir -r docker_requirements.txt
-
-# COPY utils/ utils/
-# COPY artifacts/ artifacts/
-# COPY docker_backend/ docker_backend/
-
-# EXPOSE 8000
-
-# CMD ["uvicorn", "docker_backend.api.main:app", "--host", "0.0.0.0", "--port", "8000"]
-
-
-
 FROM python:3.10-slim
 
 WORKDIR /app
